@@ -53,13 +53,13 @@ def get_matrix(data, representation, vocabulary_length, stemming, remove_stopwor
     
     # Word representation
     if representation == 'BoW':
-        #count_vectorizer = CountVectorizer(max_df = 0.9, max_features = vocabulary_length, min_df = 0.1)
-        count_vectorizer = CountVectorizer(max_features = vocabulary_length)
+        count_vectorizer = CountVectorizer(max_df = 0.9, max_features = vocabulary_length, min_df = 0)
+        #count_vectorizer = CountVectorizer(max_features = vocabulary_length)
         matrix = count_vectorizer.fit_transform(df.text)
         
     elif representation == 'tf-idf':
-        #tfidf_vectorizer = TfidfVectorizer(max_df = 0.9, max_features = vocabulary_length, min_df = 0.1, use_idf=True)
-        tfidf_vectorizer = TfidfVectorizer(max_features = vocabulary_length, use_idf=True)
+        tfidf_vectorizer = TfidfVectorizer(max_df = 0.9, max_features = vocabulary_length, min_df = 0, use_idf = True)
+        #tfidf_vectorizer = TfidfVectorizer(max_features = vocabulary_length, use_idf=True)
         matrix = tfidf_vectorizer.fit_transform(df.text)
     
     return matrix, df
