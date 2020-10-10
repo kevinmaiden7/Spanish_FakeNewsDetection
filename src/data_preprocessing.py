@@ -13,12 +13,24 @@ from nltk.stem import SnowballStemmer
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 
+import matplotlib.pyplot as plt
+
 def max_length_text(df):
     max_length = 0
     for i in range(df.shape[0]):
         length = np.size(word_tokenize(df.at[i, 'text']))
         if length > max_length: max_length = length
     return max_length
+
+def sequence_length_histogram(df):
+    lengths = []
+    for i in range(df.shape[0]):
+        length = np.size(word_tokenize(df.at[i, 'text']))
+        lengths.append(length)
+    
+    plt.hist(lengths, bins = 20)
+    plt.show()
+    return lengths
 
 def text_normalization(data):
     data['text'] = data['text'].apply(lambda x: x.lower())
@@ -39,8 +51,6 @@ def apply_stemming(data, language):
     for i in range(data.shape[0]):
          data.at[i, 'text'] = (' '.join([stemmer.stem(word) for word in data.at[i, 'text'].split()]))
 
-
-# get_matrix representation | BoW and Tf-idf for Classic ML
 
 def get_matrix(data, representation, vocabulary_length, stemming, remove_stopwords, language):
 
@@ -70,7 +80,7 @@ def get_matrix(data, representation, vocabulary_length, stemming, remove_stopwor
     return matrix, df
 
 
-# preprocessing for RNN - LSTM
+# #### Preprocessing for RNN - LSTM
 
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
