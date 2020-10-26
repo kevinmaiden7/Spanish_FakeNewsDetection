@@ -11,8 +11,6 @@ from io import BytesIO
 
 def grid_search(X, Y, models, epochs, batch_size, iterations, test_size):
     
-    Y = dataset.label.values
-    
     X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size = test_size, shuffle = True)
 
     mean_dev_accuracy = np.zeros(np.size(models))
