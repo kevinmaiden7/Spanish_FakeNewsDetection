@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
-
-
 import numpy as np
 import pandas as pd
 import re
@@ -19,18 +16,12 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import matplotlib.pyplot as plt
 
 
-# In[2]:
-
-
 def max_length_text(df):
     max_length = 0
     for i in range(df.shape[0]):
         length = np.size(word_tokenize(df.at[i, 'text']))
         if length > max_length: max_length = length
     return max_length
-
-
-# In[3]:
 
 
 def sequence_length_histogram(df):
@@ -44,17 +35,25 @@ def sequence_length_histogram(df):
     return lengths
 
 
-# In[4]:
+# add n_samples from data_2 to data_1
+def add_data_portion(data_1, data_2, n_samples):
+    df_slice = data_2.sample(n_samples)
+    df_rest = data_2.loc[~data_2.index.isin(df_slice.index)]
+    df_extended = data_1.append(df_slice, ignore_index = True)
+    
+    df_rest.reset_index(inplace = True)
+    del(df_rest['index'])
+    df_extended.reset_index(inplace = True)
+    del(df_extended['index'])
+    
+    return df_extended, df_rest
 
 
 def text_normalization(data):
     data['text'] = data['text'].apply(lambda x: x.lower())
     data['text'] = data['text'].apply((lambda x: re.sub('[%s]' % re.escape(string.punctuation), '', x)))
 
-
-# In[5]:
-
-
+    
 def remove_stop_words(data, language, get_tokenize):
     stopwords = nltk.corpus.stopwords.words(language)
     if get_tokenize:
@@ -66,9 +65,6 @@ def remove_stop_words(data, language, get_tokenize):
             data.at[i, 'text'] = ' '.join(data.at[i, 'text'])
 
 
-# In[6]:
-
-
 def apply_stemming(data, language):
     stemmer = SnowballStemmer(language)
     for i in range(data.shape[0]):
@@ -76,9 +72,6 @@ def apply_stemming(data, language):
 
 
 # #### get_matrix representation | BoW and Tf-idf for Classic ML
-
-# In[7]:
-
 
 def get_matrix(data, representation, vocabulary_length, stemming, remove_stopwords, language):
 
@@ -110,15 +103,8 @@ def get_matrix(data, representation, vocabulary_length, stemming, remove_stopwor
 
 # #### Preprocessing for RNN - LSTM; CNN
 
-# In[8]:
-
-
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-
-
-# In[9]:
-
 
 def get_input(data, stemming, remove_stopwords, vocabulary_length, max_length_sequence, language):
     
@@ -143,9 +129,6 @@ def get_input(data, stemming, remove_stopwords, vocabulary_length, max_length_se
     X = pad_sequences(X, maxlen = max_length_sequence, padding = 'post', truncating = 'post')
     
     return X, df
-
-
-# In[ ]:
 
 
 def get_input_share_tokenizer(data_1, data_2, stemming, remove_stopwords, vocabulary_length, max_length_sequence, language):
